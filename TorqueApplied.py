@@ -1,7 +1,7 @@
 
 import numpy as np
 import math
-from  constants_1U import No_Turns,v_A_Torquer,RESISTANCE,INDUCTANCE,CONTROL_STEP,h
+from  constants_1U import No_Turns,v_A_Torquer,RESISTANCE,INDUCTANCE,CONTROL_STEP,h,n
 from qnv import quatRotate
 
 def ctrlTorqueToVoltage(sat):
@@ -47,8 +47,6 @@ def currentToTorque(current_list,sat):
     v_magnetic_field_b=quatRotate(sat.getQ(),v_magnetic_field_i) #get mag field in boyd frame
     v_torque_app_b = np.cross(v_mu_app,v_magnetic_field_b)
     return v_torque_app_b
-    
-    
 
     
     

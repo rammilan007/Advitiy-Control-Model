@@ -58,7 +58,7 @@ v_q0_BO = np.array([1.,0.,0.,0.])	#unit quaternion initial condition
 MODEL_STEP=0.1
 CONTROL_STEP = 2.0	#control cycle time period in second
 h = 1e-5 #step size of integration in seconds
-
+n=10 #number of sampling points for ON/OFF states in one duty cycle
 INDUCTANCE = 68e-3	#Inductance of torquer in Henry
 RESISTANCE = 107.0	#Resistance of torquer	in Ohm
 PWM_AMPLITUDE = 3.3	#PWM amplitude in volt

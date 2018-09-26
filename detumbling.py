@@ -10,7 +10,7 @@ import qnv
 import math
 import detumbling_con as detcon
 #import actuator
-from TorqueApplied import ctrlTorqueToVoltage,currentToTorque,I
+from TorqueApplied import ctrlTorqueToVoltage,currentToTorque#,I
 import actuator as act
 
 #Read position, velocity, sun-vector, magnetic field (in nanoTeslas) in ECIF from data file
@@ -120,20 +120,20 @@ for  i in range(0,N-1):
 
     if i%20==0:
         voltage=ctrlTorqueToVoltage(Advitiy)
-#        v_duty_cycle=voltage/PWM_AMPLITUDE
-        v_duty_cycle=np.array([0.5,0.5,0.5])
-        m_current_list = act.getCurrentList(h,v_duty_cycle)  #for getting  PWM current list for a CONTROL_STEP
-        m_current_list=I(voltage)    # for getting DC current list for a CONTROL_STEP
+        v_duty_cycle=voltage/PWM_AMPLITUDE
+        m_current_list = act.getCurrentList(v_duty_cycle)  #for getting  PWM current list for a CONTROL_STEP
+        t_array=m_current_list[:,0] #time array of sampled instants for a control step
+#        m_current_list=I(voltage)    # for getting DC current list for a CONTROL_STEP
         v_app_torque_b=currentToTorque(m_current_list,Advitiy)
         for k in range(0,v_app_torque_b.shape[0]):
             Advitiy.setAppTorque_b(v_app_torque_b[k].copy())
-            Advitiy.setTime(t0 + i*MODEL_STEP + (k+1)*h)
+            Advitiy.setTime(t0 + i*MODEL_STEP + t_array[k])
             
     #Use rk4 solver to calculate the state for next step
-    for j in range(0,int(MODEL_STEP/h)):        
-        v_state_next = sol.rk4Quaternion(Advitiy,x_dot_BO,h)
+    for j in range(0,len(t_array)-1):        
+        v_state_next = sol.rk4Quaternion(Advitiy,x_dot_BO,t_array[j+1]-t_array[j])
         Advitiy.setState(v_state_next.copy())
-        Advitiy.setTime(t0 + i*MODEL_STEP + (j+1)*h)
+        Advitiy.setTime(t0 + i*MODEL_STEP + t_array[j])
 
     v_state[i+1,:] = v_state_next.copy()
     
